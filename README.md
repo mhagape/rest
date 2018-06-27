@@ -10,9 +10,9 @@ In order to run the application you'll need `node` and `npm`. The application wa
 ### Running the server
 - open the `server` project using `cd server`
 - install the dependencies using `npm install`
-- build and serve the application using `npm run serve`
+- build and serve the application using `npm start`
 
 ### Running the client
 - open the `client` project using `cd client`
 - install the dependencies using `npm install`
-- build and serve the application using `npm run start`
+- build and serve the application using `npm start`

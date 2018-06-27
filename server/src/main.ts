@@ -6,14 +6,14 @@ const server = restify.createServer();
 /*
   Enable CORS
 */
-const { preflight, actual } = cors({});
+const { preflight, actual } = cors(<any>{});
 server.pre(preflight);
 server.use(actual);
 
 /*
   Enable body parsing
 */
-server.use(restify.bodyParser());
+server.use(restify.plugins.bodyParser());
 
 /*
   Bootstrap handlers

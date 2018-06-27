@@ -72,12 +72,12 @@ export const getClient = (clients: Clients) =>
         }
     }
 
-function success(res: Response, next: Next, body?: Object, statusCode?: number): Object {
+function success(res: Response, next: Next, body?: Object, statusCode?: number): void {
     res.send(statusCode || (body === undefined ? 204 : 200), body);
-    return next();
+    next();
 }
 
-function error(res: Response, next: Next, err: Object): Object {
+function error(res: Response, next: Next, err: Object): void {
     if (err instanceof NotFoundClient) {
         res.send(404, err);
     } else if (err instanceof ClientError) {
@@ -94,5 +94,5 @@ function error(res: Response, next: Next, err: Object): Object {
         res.send(500);
     }
 
-    return next();
+    next();
 }
