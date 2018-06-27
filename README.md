@@ -5,7 +5,7 @@ This project is built as a starting point for the [REST—a guide to (kind of) g
 
 ### Prerequisites
 
-In order to run the application you'll need `node` and `npm`. The application was developed against `node v7.8.0` and `npm 4.2.0`—different versions may or may not work properly.
+In order to run the application you'll need `node` and `npm`. The application was developed against `node v10.3.0` and `npm 6.1.0`—different versions may or may not work properly.
 
 ### Running the server
 - open the `server` project using `cd server`
