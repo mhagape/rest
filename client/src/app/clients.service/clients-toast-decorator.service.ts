@@ -49,7 +49,7 @@ export class ClientsToastDecoratorService implements ClientsService {
         return response;
     }
 
-    private _showErrorToast(error: Response | string | Object): void {
+    private _showErrorToast<TError extends Response | string | Object>(error: TError): Promise<typeof error> {
         const message = error instanceof Response
             ? error.json().message
             : typeof error !== 'string'
@@ -58,6 +58,7 @@ export class ClientsToastDecoratorService implements ClientsService {
 
         this._toasts.clear();
         this._toasts.pop('error', 'Oops', message);
-        throw error;
+
+        return Promise.reject(error);
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/switchMap';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { Client, ClientsService } from '../clients.service';
 
@@ -20,7 +20,7 @@ export class ClientComponent implements OnInit {
     this.model = this
       ._route
       .params
-      .switchMap(route => route.id ? this._clients.getClient(route.id) : this._clients.getClientTemplate());
+      .pipe(switchMap(route => route.id ? this._clients.getClient(route.id) : this._clients.getClientTemplate()));
   }
 
   save(client: Client): void {
