@@ -4,86 +4,74 @@ import { Request, Response, Next } from 'restify';
 import { ClientError } from '../core';
 import { Clients, NotFoundClient } from './repository';
 import { Client } from './domain';
-import { getAvatarLink } from '../assets/links';
+import { ResourceRequest } from '../extensions';
+import { toClientsWithHypermedia } from './hypermedia';
 
-export const addClient = (clients: Clients) =>
-    (req: Request, res: Response, next: Next) => {
-        if (!req.body) {
-            return error(res, next, new ClientError('Request\'s body is missing'));
-        }
-
-        try {
-            const client = Client.fromObject({ ...req.body, id: uuid.v4() });
-            clients.add(client);
-            return success(res, next);
-        } catch (e) {
-            return error(res, next, e);
-        }
+export const addClient = (clients: Clients) => (req: Request, res: Response, next: Next) => {
+    if (!req.body) {
+        return error(res, next, new ClientError("Request's body is missing"));
     }
 
-export const addOrUpdateClient = (clients: Clients) =>
-    (req: Request, res: Response, next: Next) => {
-        if (!req.body) {
-            return error(res, next, new ClientError('Request\'s body is missing'));
-        }
+    try {
+        const client = Client.fromObject({ ...req.body, id: uuid.v4() });
+        clients.add(client);
+        return success(res, next);
+    } catch (e) {
+        return error(res, next, e);
+    }
+};
 
-        try {
-            const client = Client.fromObject({ ...req.body, id: req.params.id });
-            clients.addOrUpdate(client);
-            return success(res, next);
-        } catch (e) {
-            return error(res, next, e);
-        }
+export const addOrUpdateClient = (clients: Clients) => (req: Request, res: Response, next: Next) => {
+    if (!req.body) {
+        return error(res, next, new ClientError("Request's body is missing"));
     }
 
-export const removeClient = (clients: Clients) => 
-    (req: Request, res: Response, next: Next) => {
-        try {
-            clients.remove(req.params.id);
-            return success(res, next);
-        } catch (e) {
-            /*
+    try {
+        const client = Client.fromObject({ ...req.body, id: req.params.id });
+        clients.addOrUpdate(client);
+        return success(res, next);
+    } catch (e) {
+        return error(res, next, e);
+    }
+};
+
+export const removeClient = (clients: Clients) => (req: Request, res: Response, next: Next) => {
+    try {
+        clients.remove(req.params.id);
+        return success(res, next);
+    } catch (e) {
+        /*
                 According to RFC7231#4.2.3 DELETE should be idempotent. As such, if
                 a client cannot be removed because it doesn't exist, we return a 204
                 (no content) instead of a client error.
             */
-            if (e instanceof NotFoundClient) {
-                return success(res, next);
-            } else {
-                return error(res, next, e);
-            }
-        }
-    }
-
-export const getClients = (clients: Clients) =>
-    (req: Request, res: Response, next: Next) => {
-        try {
-            return success(res, next, clients.get().map(withAvatarUrl));
-        } catch (e) {
+        if (e instanceof NotFoundClient) {
+            return success(res, next);
+        } else {
             return error(res, next, e);
         }
     }
+};
 
-export const getClient = (clients: Clients) =>
-    (req: Request, res: Response, next: Next) => {
-        try {
-            return success(res, next, withAvatarUrl(clients.get(req.params.id)));
-        } catch (e) {
-            return error(res, next, e);
-        }
+export const getClients = (clients: Clients) => (req: ResourceRequest<Client[]>, res: Response, next: Next) => {
+    try {
+        req.withHypermedia = toClientsWithHypermedia;
+        return success(res, next, clients.get());
+    } catch (e) {
+        return error(res, next, e);
     }
+};
 
-function withAvatarUrl(client: Client): Client & {
-    avatar: string;
-} {
-    return {
-        ...client,
-        avatar: getAvatarLink(client.id).toString()
-    };
-}
+export const getClient = (clients: Clients) => (req: Request, res: Response, next: Next) => {
+    try {
+        return success(res, next, clients.get(req.params.id));
+    } catch (e) {
+        return error(res, next, e);
+    }
+};
 
 function success(res: Response, next: Next, body?: Object, statusCode?: number): void {
-    res.send(statusCode || (body === undefined ? 204 : 200), body);
+    res.send(statusCode || (body === undefined ? 204 : 200), body === undefined ? undefined : JSON.stringify(body));
     next();
 }
 

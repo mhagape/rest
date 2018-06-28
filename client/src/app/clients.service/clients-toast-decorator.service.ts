@@ -4,6 +4,7 @@ import { ToasterService } from 'angular2-toaster';
 
 import { Client } from './client.contract';
 import { ClientsService } from './clients.service';
+import { CollectionResource } from 'media-types/common';
 
 @Injectable()
 export class ClientsToastDecoratorService implements ClientsService {
@@ -27,7 +28,7 @@ export class ClientsToastDecoratorService implements ClientsService {
             .catch(e => this._showErrorToast(e));
     }
 
-    getClients(): Promise<Client[]> {
+    getClients(): Promise<CollectionResource<Client>> {
         return this._clients.getClients()
             .catch(e => this._showErrorToast(e));
     }

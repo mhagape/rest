@@ -1,3 +1,5 @@
+import { Request } from 'restify';
+import * as url from 'url';
 import { guardAgainstEmptyArgument } from './guards';
 
 export class Url {
@@ -8,4 +10,14 @@ export class Url {
     toString(): string {
         return this._url;
     }
+}
+
+export function pathNameToUrl(req: Request, pathName: string): Url {
+    return new Url(
+        url.format({
+            protocol: req.isSecure() ? 'https' : 'http',
+            host: req.headers.host,
+            pathname: pathName
+        })
+    );
 }

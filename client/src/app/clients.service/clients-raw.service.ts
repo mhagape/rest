@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, Headers } from '@angular/http';
 
 import { BASE_URL } from '../settings';
 import { Client } from './client.contract';
 import { ClientsService } from './clients.service';
+import { CollectionResource } from 'media-types/common';
 
 @Injectable()
 export class ClientsRawService implements ClientsService {
@@ -28,10 +29,14 @@ export class ClientsRawService implements ClientsService {
       .toPromise();
   }
 
-  getClients(): Promise<Client[]> {
+  getClients(): Promise<CollectionResource<Client>> {
     return this
       ._http
-      .get(this._getClientsUrl())
+      .get(this._getClientsUrl(), {
+        headers: new Headers({
+          'Accept': 'application/vnd.example+json'
+        })
+      })
       .toPromise()
       .then(r => r.json());
   }

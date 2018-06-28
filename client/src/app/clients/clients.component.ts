@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ClientsService, Client } from 'app/clients.service';
+import { CollectionResource, SingleResource, Link } from 'media-types/common';
 
 @Component({
   selector: 'ui-clients',
@@ -8,7 +9,7 @@ import { ClientsService, Client } from 'app/clients.service';
 })
 export class ClientsComponent implements OnInit {
 
-  clients: Promise<Client[]>;
+  clients: Promise<CollectionResource<Client>>;
 
   constructor(private _clients: ClientsService) {
   }
@@ -17,11 +18,16 @@ export class ClientsComponent implements OnInit {
     this._loadClients();
   }
 
-  removeClient(client: Client): void {
+  removeClient(client: SingleResource<Client>): void {
     this
       ._clients
-      .removeClient(client.id)
+      .removeClient(client.properties.id)
       .then(() => this._loadClients());
+  }
+
+  // TODO: pipe/memoize
+  getAvatarLink(client: SingleResource<Client>): Link {
+    return client.links.find(l => l.relation === 'icon');
   }
 
   private _loadClients(): void {

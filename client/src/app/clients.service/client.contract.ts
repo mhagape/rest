@@ -3,7 +3,6 @@ export interface Client {
 
   firstName?: string;
   lastName?: string;
-  avatar?: string;
 
   country?: number;
   postalCode?: string;

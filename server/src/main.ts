@@ -3,34 +3,58 @@ import * as cors from 'restify-cors-middleware';
 
 import { default as bootstrapAssets } from './assets/bootstrap';
 import { default as bootstrapClients } from './clients/bootstrap';
+import { linkToSelf } from './core/links';
+import { ResourceRequest } from './extensions';
 
-const server = restify.createServer();
+const server = restify.createServer({
+    formatters: {
+        'application/vnd.example+json': <T>(req: ResourceRequest<T>, res: restify.Response, data: string) => {
+            const body = req.withHypermedia(req, res, JSON.parse(data));
+            return JSON.stringify(body, undefined, 2);
+        },
+        'application/json': (req: restify.Request, res: restify.Response, data: string) =>
+            JSON.stringify(JSON.parse(data), undefined, 2)
+    }
+});
 
 /*
-  Enable CORS
+    Enable CORS
 */
 const { preflight, actual } = cors({
-  allowHeaders: ['*'],
-  exposeHeaders: ['*'],
-  origins: ['*']
+    allowHeaders: ['*'],
+    exposeHeaders: ['*'],
+    origins: ['*']
 });
 server.pre(preflight);
 server.use(actual);
 
 /*
-  Enable body parsing
+    Add null withHypermedia implementation
+*/
+server.pre((req: ResourceRequest<object>, res: restify.Response, next: restify.Next) => {
+    req.withHypermedia = (req, res, resource) => ({
+        properties: resource,
+        links: [
+            linkToSelf(req)
+        ]
+    });
+    next();
+});
+
+/*
+    Enable body parsing
 */
 server.use(restify.plugins.bodyParser());
 
 /*
-  Start server
+    Start server
 */
 server.listen(8080, function() {
-  console.log('%s listening at %s', server.name, server.url);
+    console.log('%s listening at %s', server.name, server.url);
 
-  /*
-  Bootstrap handlers
-  */
-  bootstrapAssets(server);
-  bootstrapClients(server);
+    /*
+    Bootstrap handlers
+    */
+    bootstrapAssets(server);
+    bootstrapClients(server);
 });

@@ -9,12 +9,12 @@
   </thead>
 
   <tbody>
-    <tr *ngFor="let client of (clients | async)">
-      <td class="avatar"><img [src]="client.avatar"></td>
-      <td>{{client.firstName}} {{client.lastName}}</td>
-      <td>{{client.country === 0 ? 'Germany' : client.country === 1 ? 'United Kingdom' : undefined}}</td>
+    <tr *ngFor="let client of (clients | async)?.resources">
+      <td class="avatar"><img [attr.alt]="getAvatarLink(client).title" [src]="getAvatarLink(client).href"></td>
+      <td>{{client.properties.firstName}} {{client.properties.lastName}}</td>
+      <td>{{client.properties.country === 0 ? 'Germany' : client.properties.country === 1 ? 'United Kingdom' : undefined}}</td>
       <td class="operations">
-        <a [routerLink]="[client.id]" class="primary">Edit</a>
+        <a [routerLink]="[client.properties.id]" class="primary">Edit</a>
         <button (click)="removeClient(client)" class="negative">Remove</button>
       </td>
     </tr>
