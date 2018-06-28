@@ -6,7 +6,11 @@ const server = restify.createServer();
 /*
   Enable CORS
 */
-const { preflight, actual } = cors(<any>{});
+const { preflight, actual } = cors({
+  allowHeaders: ['*'],
+  exposeHeaders: ['*'],
+  origins: ['*']
+});
 server.pre(preflight);
 server.use(actual);
 
