@@ -2,8 +2,9 @@ import * as uuid from 'node-uuid';
 import { Request, Response, Next } from 'restify';
 
 import { ClientError } from '../core';
-import { Clients, DuplicateClient, NotFoundClient } from './repository';
+import { Clients, NotFoundClient } from './repository';
 import { Client } from './domain';
+import { getAvatarLink } from '../assets/links';
 
 export const addClient = (clients: Clients) =>
     (req: Request, res: Response, next: Next) => {
@@ -57,7 +58,7 @@ export const removeClient = (clients: Clients) =>
 export const getClients = (clients: Clients) =>
     (req: Request, res: Response, next: Next) => {
         try {
-            return success(res, next, clients.get());
+            return success(res, next, clients.get().map(withAvatarUrl));
         } catch (e) {
             return error(res, next, e);
         }
@@ -66,11 +67,20 @@ export const getClients = (clients: Clients) =>
 export const getClient = (clients: Clients) =>
     (req: Request, res: Response, next: Next) => {
         try {
-            return success(res, next, clients.get(req.params.id));
+            return success(res, next, withAvatarUrl(clients.get(req.params.id)));
         } catch (e) {
             return error(res, next, e);
         }
     }
+
+function withAvatarUrl(client: Client): Client & {
+    avatar: string;
+} {
+    return {
+        ...client,
+        avatar: getAvatarLink(client.id).toString()
+    };
+}
 
 function success(res: Response, next: Next, body?: Object, statusCode?: number): void {
     res.send(statusCode || (body === undefined ? 204 : 200), body);

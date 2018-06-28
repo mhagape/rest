@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BASE_URL } from '../settings';
 import { ClientsService, Client } from 'app/clients.service';
 
 @Component({
@@ -16,10 +15,6 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit(): void {
     this._loadClients();
-  }
-
-  getAvatarUrl(client: Client): string {
-    return `${BASE_URL}/assets/avatars/${client.id}`;
   }
 
   removeClient(client: Client): void {

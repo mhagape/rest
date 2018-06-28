@@ -1,6 +1,9 @@
 import * as restify from 'restify';
 import * as cors from 'restify-cors-middleware';
 
+import { default as bootstrapAssets } from './assets/bootstrap';
+import { default as bootstrapClients } from './clients/bootstrap';
+
 const server = restify.createServer();
 
 /*
@@ -20,17 +23,14 @@ server.use(actual);
 server.use(restify.plugins.bodyParser());
 
 /*
-  Bootstrap handlers
-*/
-import { default as bootstrapAssets } from './assets/bootstrap';
-bootstrapAssets(server);
-
-import { default as bootstrapClients } from './clients/bootstrap';
-bootstrapClients(server);
-
-/*
   Start server
 */
 server.listen(8080, function() {
   console.log('%s listening at %s', server.name, server.url);
+
+  /*
+  Bootstrap handlers
+  */
+  bootstrapAssets(server);
+  bootstrapClients(server);
 });

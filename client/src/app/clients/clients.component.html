@@ -10,7 +10,7 @@
 
   <tbody>
     <tr *ngFor="let client of (clients | async)">
-      <td class="avatar"><img [src]="getAvatarUrl(client)"></td>
+      <td class="avatar"><img [src]="client.avatar"></td>
       <td>{{client.firstName}} {{client.lastName}}</td>
       <td>{{client.country === 0 ? 'Germany' : client.country === 1 ? 'United Kingdom' : undefined}}</td>
       <td class="operations">

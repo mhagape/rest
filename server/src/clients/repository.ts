@@ -1,9 +1,8 @@
-import { ClientError } from "../core";
+import { ClientError } from '../core';
 import { Client } from './domain';
 
 export class Clients {
-
-    private _clients: { [key: string]: Client } = { };
+    private _clients: { [key: string]: Client } = {};
 
     add(client: Client): void {
         if (!this._clients[client.id]) {
