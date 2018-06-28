@@ -1,7 +1,7 @@
 import { Server } from 'restify';
 
 import * as handlers from './handlers';
-import { Client, Title, Country } from './domain';
+import { Client, Country } from './domain';
 import { Clients } from './repository';
 
 export default function bootstrap(server: Server) {
@@ -17,8 +17,8 @@ export default function bootstrap(server: Server) {
 function getClientsRepository(): Clients {
     const clients = new Clients();
 
-    clients.add(new Client('a51e95ed-ae46-4010-8784-8e11cb4e346d', Title.Mr, 'Robert', 'Ford', Country.UnitedKingdom, 'GL1 1AP'));
-    clients.add(new Client('a1afa68a-53e7-4925-9a29-ee539434cb17', Title.Mr, 'Phillip', 'Meyer', Country.Germany, '13189'));
+    clients.add(new Client('a51e95ed-ae46-4010-8784-8e11cb4e346d', 'Robert', 'Ford', Country.UnitedKingdom, 'GL1 1AP'));
+    clients.add(new Client('a1afa68a-53e7-4925-9a29-ee539434cb17', 'Phillip', 'Meyer', Country.Germany, '13189'));
 
     return clients;
 }

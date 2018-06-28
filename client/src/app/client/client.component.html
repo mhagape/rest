@@ -3,12 +3,6 @@
     <legend>Personal information</legend>
 
     <div class="row">
-      <select name="title" [(ngModel)]="model.title">
-        <option [ngValue]="undefined" disabled hidden>Title</option>
-        <option [ngValue]="0">Mrs.</option>
-        <option [ngValue]="1">Ms.</option>
-        <option [ngValue]="2">Mr.</option>
-      </select>
       <input type="text" placeholder="First name" name="firstName" [(ngModel)]="model.firstName" required>
       <input type="text" placeholder="Last name" name="lastName" [(ngModel)]="model.lastName" required>
     </div>
