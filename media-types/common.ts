@@ -13,6 +13,8 @@ export type Link = {
 
     relation: LinkRelation;
     href: string;
+    allow: LinkAllow[];
 };
 
-export type LinkRelation = 'self' | 'icon';
+export type LinkRelation = 'self' | 'icon' | 'edit';
+export type LinkAllow = 'read' | 'delete';

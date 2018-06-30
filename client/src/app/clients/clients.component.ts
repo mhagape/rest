@@ -18,14 +18,17 @@ export class ClientsComponent implements OnInit {
     this._loadClients();
   }
 
+  canRemoveClient(client: SingleResource<Client>): boolean {
+    return client.links.some(l => l.relation === 'self' && l.allow.includes('delete'));
+  }
+
   removeClient(client: SingleResource<Client>): void {
     this
       ._clients
-      .removeClient(client.properties.id)
+      .removeClient(client)
       .then(() => this._loadClients());
   }
 
-  // TODO: pipe/memoize
   getAvatarLink(client: SingleResource<Client>): Link {
     return client.links.find(l => l.relation === 'icon');
   }

@@ -4,7 +4,7 @@ import { Http, Response, Headers } from '@angular/http';
 import { BASE_URL } from '../settings';
 import { Client } from './client.contract';
 import { ClientsService } from './clients.service';
-import { CollectionResource } from 'media-types/common';
+import { CollectionResource, SingleResource } from 'media-types/common';
 
 @Injectable()
 export class ClientsRawService implements ClientsService {
@@ -49,10 +49,10 @@ export class ClientsRawService implements ClientsService {
       .then(r => r.json());
   }
 
-  removeClient(id: string): Promise<Response> {
+  removeClient(client: SingleResource<Client>): Promise<Response> {
     return this
       ._http
-      .delete(this._getClientUrl(id))
+      .delete(client.links.find(l => l.relation === 'self' && l.allow.includes('delete')).href)
       .toPromise();
   }
 

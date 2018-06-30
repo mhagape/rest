@@ -4,7 +4,7 @@ import { ToasterService } from 'angular2-toaster';
 
 import { Client } from './client.contract';
 import { ClientsService } from './clients.service';
-import { CollectionResource } from 'media-types/common';
+import { CollectionResource, SingleResource } from 'media-types/common';
 
 @Injectable()
 export class ClientsToastDecoratorService implements ClientsService {
@@ -38,8 +38,8 @@ export class ClientsToastDecoratorService implements ClientsService {
             .catch(e => this._showErrorToast(e));
     }
 
-    removeClient(id: string): Promise<Response> {
-        return this._clients.removeClient(id)
+    removeClient(client: SingleResource<Client>): Promise<Response> {
+        return this._clients.removeClient(client)
             .then(r => this._showSuccessToast(r, 'Client removed'))
             .catch(e => this._showErrorToast(e));
     }

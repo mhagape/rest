@@ -1,7 +1,7 @@
 import { Response } from '@angular/http';
 
 import { Client } from './client.contract';
-import { CollectionResource } from 'media-types/common';
+import { CollectionResource, SingleResource } from 'media-types/common';
 
 export abstract class ClientsService {
   abstract getClientTemplate(): Promise<Client>;
@@ -9,5 +9,5 @@ export abstract class ClientsService {
   abstract updateClient(client: Client): Promise<Response>;
   abstract getClients(): Promise<CollectionResource<Client>>;
   abstract getClient(id: string): Promise<Client>;
-  abstract removeClient(id: string): Promise<Response>;
+  abstract removeClient(client: SingleResource<Client>): Promise<Response>;
 }

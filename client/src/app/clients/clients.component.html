@@ -10,12 +10,13 @@
 
   <tbody>
     <tr *ngFor="let client of (clients | async)?.resources">
+      <!-- TODO: No avatar -->
       <td class="avatar"><img [attr.alt]="getAvatarLink(client).title" [src]="getAvatarLink(client).href"></td>
       <td>{{client.properties.firstName}} {{client.properties.lastName}}</td>
       <td>{{client.properties.country === 0 ? 'Germany' : client.properties.country === 1 ? 'United Kingdom' : undefined}}</td>
       <td class="operations">
         <a [routerLink]="[client.properties.id]" class="primary">Edit</a>
-        <button (click)="removeClient(client)" class="negative">Remove</button>
+        <button *ngIf="canRemoveClient(client)" (click)="removeClient(client)" class="negative">Remove</button>
       </td>
     </tr>
   </tbody>

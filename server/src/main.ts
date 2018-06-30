@@ -3,8 +3,8 @@ import * as cors from 'restify-cors-middleware';
 
 import { default as bootstrapAssets } from './assets/bootstrap';
 import { default as bootstrapClients } from './clients/bootstrap';
-import { linkToSelf } from './core/links';
 import { ResourceRequest } from './extensions';
+import { pathNameToUrl } from './core';
 
 const server = restify.createServer({
     formatters: {
@@ -35,7 +35,11 @@ server.pre((req: ResourceRequest<object>, res: restify.Response, next: restify.N
     req.withHypermedia = (req, res, resource) => ({
         properties: resource,
         links: [
-            linkToSelf(req)
+            {
+                relation: 'self',
+                href: pathNameToUrl(req, req.url || '').toString(),
+                allow: ['read']
+            }
         ]
     });
     next();
