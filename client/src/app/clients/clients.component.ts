@@ -29,6 +29,22 @@ export class ClientsComponent implements OnInit {
       .then(() => this._loadClients());
   }
 
+  canEditClient(client: SingleResource<Client>): boolean {
+    return Boolean(this.getClientEditLink(client));
+  }
+
+  getClientEditLink(client: SingleResource<Client>): Link {
+    return client.links.find(l => l.relation === 'self' && l.allow.includes('update'));
+  }
+
+  canAddClient(clients: CollectionResource<Client>): boolean {
+    return Boolean(this.getClientAddLink(clients));
+  }
+
+  getClientAddLink(clients: CollectionResource<Client>): Link {
+    return clients.links.find(l => l.relation === 'create');
+  }
+
   getAvatarLink(client: SingleResource<Client>): Link {
     return client.links.find(l => l.relation === 'icon');
   }

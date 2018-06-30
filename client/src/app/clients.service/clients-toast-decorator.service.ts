@@ -8,58 +8,43 @@ import { CollectionResource, SingleResource } from 'media-types/common';
 
 @Injectable()
 export class ClientsToastDecoratorService implements ClientsService {
-    constructor(private _clients: ClientsService, private _toasts: ToasterService) {
-    }
+  constructor(private _clients: ClientsService, private _toasts: ToasterService) {}
 
-    getClientTemplate(): Promise<Client> {
-        return this._clients.getClientTemplate()
-            .catch(e => this._showErrorToast(e));
-    }
+  saveClient(client: SingleResource<Client>): Promise<Response> {
+    return this._clients
+      .saveClient(client)
+      .then(r => this._showSuccessToast(r, 'Client added'))
+      .catch(e => this._showErrorToast(e));
+  }
 
-    addClient(client: Client): Promise<Response> {
-        return this._clients.addClient(client)
-            .then(r => this._showSuccessToast(r, 'Client added'))
-            .catch(e => this._showErrorToast(e));
-    }
+  getClients(): Promise<CollectionResource<Client>> {
+    return this._clients.getClients().catch(e => this._showErrorToast(e));
+  }
 
-    updateClient(client: Client): Promise<Response> {
-        return this._clients.updateClient(client)
-            .then(r => this._showSuccessToast(r, 'Client updated'))
-            .catch(e => this._showErrorToast(e));
-    }
+  getClient(href: string): Promise<SingleResource<Client>> {
+    return this._clients.getClient(href).catch(e => this._showErrorToast(e));
+  }
 
-    getClients(): Promise<CollectionResource<Client>> {
-        return this._clients.getClients()
-            .catch(e => this._showErrorToast(e));
-    }
+  removeClient(client: SingleResource<Client>): Promise<Response> {
+    return this._clients
+      .removeClient(client)
+      .then(r => this._showSuccessToast(r, 'Client removed'))
+      .catch(e => this._showErrorToast(e));
+  }
 
-    getClient(id: string): Promise<Client> {
-        return this._clients.getClient(id)
-            .catch(e => this._showErrorToast(e));
-    }
+  private _showSuccessToast(response: Response, message: string): Response {
+    this._toasts.clear();
+    this._toasts.pop('success', message);
+    return response;
+  }
 
-    removeClient(client: SingleResource<Client>): Promise<Response> {
-        return this._clients.removeClient(client)
-            .then(r => this._showSuccessToast(r, 'Client removed'))
-            .catch(e => this._showErrorToast(e));
-    }
+  private _showErrorToast<TError extends Response | string | Object>(error: TError): Promise<typeof error> {
+    const message =
+      error instanceof Response ? error.json().message : typeof error !== 'string' ? JSON.stringify(error) : error;
 
-    private _showSuccessToast(response: Response, message: string): Response {
-        this._toasts.clear();
-        this._toasts.pop('success', message);
-        return response;
-    }
+    this._toasts.clear();
+    this._toasts.pop('error', 'Oops', message);
 
-    private _showErrorToast<TError extends Response | string | Object>(error: TError): Promise<typeof error> {
-        const message = error instanceof Response
-            ? error.json().message
-            : typeof error !== 'string'
-            ? JSON.stringify(error)
-            : error;
-
-        this._toasts.clear();
-        this._toasts.pop('error', 'Oops', message);
-
-        return Promise.reject(error);
-    }
+    return Promise.reject(error);
+  }
 }

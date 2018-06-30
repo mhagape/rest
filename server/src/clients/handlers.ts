@@ -5,7 +5,7 @@ import { ClientError } from '../core';
 import { Clients, NotFoundClient } from './repository';
 import { Client } from './domain';
 import { ResourceRequest } from '../extensions';
-import { toClientsWithHypermedia } from './hypermedia';
+import { toClientsWithHypermedia, toClientWithHypermedia, toClientTemplateWithHypermedia } from './hypermedia';
 
 export const addClient = (clients: Clients) => (req: Request, res: Response, next: Next) => {
     if (!req.body) {
@@ -62,8 +62,18 @@ export const getClients = (clients: Clients) => (req: ResourceRequest<Client[]>,
     }
 };
 
-export const getClient = (clients: Clients) => (req: Request, res: Response, next: Next) => {
+export const getClientTemplate = () => (req: ResourceRequest<Client>, res: Response, next: Next) => {
     try {
+        req.withHypermedia = toClientTemplateWithHypermedia;
+        return success(res, next, {});
+    } catch (e) {
+        return error(res, next, e);
+    }
+};
+
+export const getClient = (clients: Clients) => (req: ResourceRequest<Client>, res: Response, next: Next) => {
+    try {
+        req.withHypermedia = toClientWithHypermedia
         return success(res, next, clients.get(req.params.id));
     } catch (e) {
         return error(res, next, e);

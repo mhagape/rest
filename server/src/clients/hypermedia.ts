@@ -13,6 +13,25 @@ export function toClientsWithHypermedia(req, res, clients: Client[]): Resource<C
                 relation: 'self',
                 href: pathNameToUrl(req, req.url || '').toString(),
                 allow: ['read']
+            },
+            {
+                title: 'Add client',
+                relation: 'create',
+                href: pathNameToUrl(req, `${req.url || ''}/template`).toString(),
+                allow: ['read', 'update']
+            }
+        ]
+    };
+}
+
+export function toClientTemplateWithHypermedia(req, res, client: Client): Resource<Client> {
+    return {
+        properties: client,
+        links: [
+            {
+                relation: 'self',
+                href: pathNameToUrl(req, `api/clients`).toString(),
+                allow: ['create']
             }
         ]
     };
@@ -32,7 +51,7 @@ export function toClientWithHypermedia(req, res, client: Client): Resource<Clien
                 title: `${client.firstName} ${client.lastName}`,
                 relation: 'self',
                 href: pathNameToUrl(req, `api/clients/${client.id}`).toString(),
-                allow: ['read', 'delete']
+                allow: ['read', 'delete', 'update']
             }
         ]
     };

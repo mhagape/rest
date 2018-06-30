@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of as ObservableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { SingleResource } from 'media-types/common';
 
 import { Client, ClientsService } from '../clients.service';
 
@@ -10,23 +11,15 @@ import { Client, ClientsService } from '../clients.service';
   templateUrl: './client.component.html'
 })
 export class ClientComponent implements OnInit {
+  resource: Observable<SingleResource<Client>>;
 
-  model: Observable<Client>;
-
-  constructor(private _route: ActivatedRoute, private _router: Router, private _clients: ClientsService) {
-  }
+  constructor(private _route: ActivatedRoute, private _router: Router, private _clients: ClientsService) {}
 
   ngOnInit(): void {
-    this.model = this
-      ._route
-      .params
-      .pipe(switchMap(route => route.id ? this._clients.getClient(route.id) : this._clients.getClientTemplate()));
+    this.resource = this._route.params.pipe(switchMap(route => this._clients.getClient(route.href)));
   }
 
-  save(client: Client): void {
-    (client.id
-      ? this._clients.updateClient(client)
-      : this._clients.addClient(client))
-      .then(() => this._router.navigate(['../']));
+  save(client: SingleResource<Client>): void {
+    this._clients.saveClient(client).then(() => this._router.navigate(['../']));
   }
 }

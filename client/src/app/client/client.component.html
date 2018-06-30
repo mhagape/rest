@@ -1,10 +1,10 @@
-<form *ngIf="model | async; let model" ngNativeValidate (ngSubmit)="save(model)">
+<form *ngIf="resource | async; let resource" ngNativeValidate (ngSubmit)="save(resource)">
   <fieldset>
     <legend>Personal information</legend>
 
     <div class="row">
-      <input type="text" placeholder="First name" name="firstName" [(ngModel)]="model.firstName" required>
-      <input type="text" placeholder="Last name" name="lastName" [(ngModel)]="model.lastName" required>
+      <input type="text" placeholder="First name" name="firstName" [(ngModel)]="resource.properties.firstName" required>
+      <input type="text" placeholder="Last name" name="lastName" [(ngModel)]="resource.properties.lastName" required>
     </div>
   </fieldset>
 
@@ -12,12 +12,12 @@
     <legend>Address</legend>
 
     <div class="row">
-      <select name="country" [(ngModel)]="model.country">
+      <select name="country" [(ngModel)]="resource.properties.country">
         <option [ngValue]="undefined" disabled hidden>Country</option>
         <option [ngValue]="0">Germany</option>
         <option [ngValue]="1">United Kingdom</option>
       </select>
-      <input type="text" placeholder="Postal code" name="postalCode" [(ngModel)]="model.postalCode">
+      <input type="text" placeholder="Postal code" name="postalCode" [(ngModel)]="resource.properties.postalCode">
     </div>
   </fieldset>
 

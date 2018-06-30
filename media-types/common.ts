@@ -16,5 +16,5 @@ export type Link = {
     allow: LinkAllow[];
 };
 
-export type LinkRelation = 'self' | 'icon' | 'edit';
-export type LinkAllow = 'read' | 'delete';
+export type LinkRelation = 'self' | 'icon' | 'create';
+export type LinkAllow = 'read' | 'delete' | 'update' | 'create';

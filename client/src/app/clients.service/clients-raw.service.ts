@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Response, Headers, RequestOptionsArgs } from '@angular/http';
 
 import { BASE_URL } from '../settings';
 import { Client } from './client.contract';
@@ -8,59 +8,43 @@ import { CollectionResource, SingleResource } from 'media-types/common';
 
 @Injectable()
 export class ClientsRawService implements ClientsService {
-  constructor(private _http: Http) {
-  }
+  private readonly _defaultRequestOptions: RequestOptionsArgs = {
+    headers: new Headers({
+      Accept: 'application/vnd.example+json'
+    })
+  };
 
-  getClientTemplate(): Promise<Client> {
-    return Promise.resolve({});
-  }
+  constructor(private _http: Http) {}
 
-  addClient(client: Client): Promise<Response> {
-    return this
-      ._http
-      .post(this._getClientsUrl(), client)
-      .toPromise();
-  }
-
-  updateClient(client: Client): Promise<Response> {
-    return this
-      ._http
-      .put(this._getClientUrl(client.id), client)
-      .toPromise();
+  saveClient(client: SingleResource<Client>): Promise<Response> {
+    const link =
+      client.links.find(l => l.relation === 'self' && l.allow.includes('create')) ||
+      client.links.find(l => l.relation === 'self' && l.allow.includes('update'));
+    const method = link.allow.includes('create') ? 'post' : 'put';
+    return this._http[method].call(this._http, link.href, client.properties).toPromise();
   }
 
   getClients(): Promise<CollectionResource<Client>> {
-    return this
-      ._http
-      .get(this._getClientsUrl(), {
-        headers: new Headers({
-          'Accept': 'application/vnd.example+json'
-        })
-      })
+    return this._http
+      .get(this._getClientsUrl(), this._defaultRequestOptions)
       .toPromise()
       .then(r => r.json());
   }
 
-  getClient(id: string): Promise<Client> {
-    return this
-      ._http
-      .get(this._getClientUrl(id))
+  getClient(href: string): Promise<SingleResource<Client>> {
+    return this._http
+      .get(href, this._defaultRequestOptions)
       .toPromise()
       .then(r => r.json());
   }
 
   removeClient(client: SingleResource<Client>): Promise<Response> {
-    return this
-      ._http
+    return this._http
       .delete(client.links.find(l => l.relation === 'self' && l.allow.includes('delete')).href)
       .toPromise();
   }
 
   private _getClientsUrl(): string {
     return `${BASE_URL}/api/clients`;
-  }
-
-  private _getClientUrl(id: string): string {
-    return `${BASE_URL}/api/clients/${id}`;
   }
 }

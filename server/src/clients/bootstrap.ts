@@ -11,6 +11,7 @@ export default function bootstrap(server: Server) {
     server.put('/api/clients/:id', handlers.addOrUpdateClient(clients));
     server.del('/api/clients/:id', handlers.removeClient(clients));
     server.get('/api/clients', handlers.getClients(clients));
+    server.get('/api/clients/template', handlers.getClientTemplate());
     server.get('/api/clients/:id', handlers.getClient(clients));
 }
 
