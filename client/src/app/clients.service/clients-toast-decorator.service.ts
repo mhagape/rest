@@ -17,8 +17,8 @@ export class ClientsToastDecoratorService implements ClientsService {
       .catch(e => this._showErrorToast(e));
   }
 
-  getClients(): Promise<CollectionResource<Client>> {
-    return this._clients.getClients().catch(e => this._showErrorToast(e));
+  getClients(href: string): Promise<CollectionResource<Client>> {
+    return this._clients.getClients(href).catch(e => this._showErrorToast(e));
   }
 
   getClient(href: string): Promise<SingleResource<Client>> {

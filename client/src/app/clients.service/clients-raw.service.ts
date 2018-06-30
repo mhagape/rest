@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptionsArgs } from '@angular/http';
 
-import { BASE_URL } from '../settings';
 import { Client } from './client.contract';
 import { ClientsService } from './clients.service';
 import { CollectionResource, SingleResource } from 'media-types/common';
@@ -24,9 +23,9 @@ export class ClientsRawService implements ClientsService {
     return this._http[method].call(this._http, link.href, client.properties).toPromise();
   }
 
-  getClients(): Promise<CollectionResource<Client>> {
+  getClients(href: string): Promise<CollectionResource<Client>> {
     return this._http
-      .get(this._getClientsUrl(), this._defaultRequestOptions)
+      .get(href, this._defaultRequestOptions)
       .toPromise()
       .then(r => r.json());
   }
@@ -42,9 +41,5 @@ export class ClientsRawService implements ClientsService {
     return this._http
       .delete(client.links.find(l => l.relation === 'self' && l.allow.includes('delete')).href)
       .toPromise();
-  }
-
-  private _getClientsUrl(): string {
-    return `${BASE_URL}/api/clients`;
   }
 }

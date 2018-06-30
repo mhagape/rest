@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { ClientsService, Client } from 'app/clients.service';
 import { CollectionResource, SingleResource, Link } from 'media-types/common';
+import { switchMap, first } from '../../../node_modules/rxjs/operators';
 
 @Component({
   selector: 'ui-clients',
   templateUrl: './clients.component.html'
 })
 export class ClientsComponent implements OnInit {
-
   clients: Promise<CollectionResource<Client>>;
 
-  constructor(private _clients: ClientsService) {
-  }
+  constructor(private _clients: ClientsService, private _route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this._loadClients();
@@ -23,10 +23,7 @@ export class ClientsComponent implements OnInit {
   }
 
   removeClient(client: SingleResource<Client>): void {
-    this
-      ._clients
-      .removeClient(client)
-      .then(() => this._loadClients());
+    this._clients.removeClient(client).then(() => this._loadClients());
   }
 
   canEditClient(client: SingleResource<Client>): boolean {
@@ -50,6 +47,11 @@ export class ClientsComponent implements OnInit {
   }
 
   private _loadClients(): void {
-    this.clients = this._clients.getClients();
+    this.clients = this._route.params
+      .pipe(
+        switchMap(route => this._clients.getClients(route.href)),
+        first()
+      )
+      .toPromise();
   }
 }
