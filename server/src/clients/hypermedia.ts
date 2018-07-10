@@ -2,7 +2,8 @@ import { Resource, LinkAllow } from 'media-types';
 
 import { Client } from './domain';
 import { getAvatarLink } from '../assets/links';
-import { pathNameToUrl } from '../core';
+import { pathNameToUrl, getBaseAddressFromRequest } from '../core';
+import * as url from 'url';
 
 export function toClientsWithHypermedia(req, res, clients: Client[]): Resource<Client[]> {
     return {
@@ -38,13 +39,14 @@ export function toClientTemplateWithHypermedia(req, res, client: Client): Resour
 }
 
 export function toClientWithHypermedia(req, res, client: Client): Resource<Client> {
+    const baseUrl = getBaseAddressFromRequest(req).toString();
     return {
         properties: client,
         links: [
             {
                 title: `${client.firstName} ${client.lastName}'s avatar`,
                 relation: 'icon',
-                href: getAvatarLink(client.id).toString(),
+                href: getAvatarLink(client.id, {baseUrl: baseUrl}).toString(),
                 allow: ['read']
             },
             {
